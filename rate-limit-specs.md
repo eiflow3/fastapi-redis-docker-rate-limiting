@@ -18,15 +18,15 @@ The middleware accepts the following configuration parameters:
 The system extracts the "feature/endpoint" portion of the URL path for rate limiting keys, ignoring:
 
 - Service version prefixes (e.g., `/v1/`, `/v2/`)
-- Service name (e.g., `/aina/`)
+- Service name (e.g., `/service/`)
 - Access level prefixes (e.g., `/public/`, `/internal/`)
 
 The path parsing is handled by the `_parse_feature_endpoint()` method in `RateLimitMiddleware`.
 
 Examples:
 
-- `/v1/aina/logo/generate` → `logo/generate`
-- `/v1/aina/public/logo/generate` → `logo/generate`
+- `/v1/service/logo/generate` → `logo/generate`
+- `/v1/service/public/logo/generate` → `logo/generate`
 - `/v1/service/feature/one` → `feature/one`
 - `/health` → `health`
 
