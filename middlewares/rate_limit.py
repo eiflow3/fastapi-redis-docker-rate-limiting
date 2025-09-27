@@ -33,9 +33,9 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     content={"detail": "Rate limit exceeded"},
                     headers={
                         "X-Rate-Limit-Remaining": "0",
-                        "X-Rate-Limit-Reset": str(int(data["api-requests-reset"]))
-                    }
-                )            
+                        "X-Rate-Limit-Reset": str(int(data["api-requests-reset"])),
+                    },
+                )
             data["api-remaining-request"] -= 1
         else:
             # Create new entry
@@ -46,7 +46,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             }
 
         # Save back to Redis with TTL 30 mins (1800 seconds)
-        await request.app.state.redis.setex(key, 60, json.dumps(data))
+        await request.app.state.redis.setex(key, 1800, json.dumps(data))
 
         # Proceed with the request
         response = await call_next(request)

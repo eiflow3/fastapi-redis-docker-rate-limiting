@@ -1,24 +1,37 @@
+# Rate Limiting Specifications
 
+## Overview
 
+This document outlines the rate limiting logic implemented in the FastAPI application using Redis as the backend store.
 
-user request to and endpoint /health?store_id=123456
+## Rate Limiting Flow
 
-will check for the path get it this time -> "health"
-will check also for the query param store_id -> "123456"
+For a user request to an endpoint such as `/health?store_id=123456`:
 
-check if there is a key on redis present still {store_id}_{path}
+1. **Extract Path**: Get the endpoint path, e.g., "health"
+2. **Extract Store ID**: Get the `store_id` query parameter, e.g., "123456"
+3. **Redis Key**: Construct the key as `{store_id}_{path}`, e.g., `123456_health`
 
-if no create it:
-    then use this value to save something on redis that has TTL of 30mins
+### If Key Does Not Exist in Redis
 
-    value should be an object like this: 
-    { 
-        'api-remaining-request': 4,
-        'api-requests-reset': utc from the time of creation + 30mins
-    }
+- Create a new entry with a TTL of 30 minutes
+- Store an object with the following structure:
+  ```json
+  {
+    "api-remaining-request": 4,
+    "api-requests-reset": <UTC timestamp of creation + 30 minutes>
+  }
+  ```
 
-if yes:
-    check first if the rate-limit value is 0 then raise an error
+### If Key Exists in Redis
 
-    else:
-        update the value of api-remaining-request
+- Check if `api-remaining-request` <= 0:
+  - If true, return HTTP 429 (Too Many Requests)
+- Otherwise:
+  - Decrement `api-remaining-request` by 1
+
+## Notes
+
+- The rate limit allows up to 4 requests per 30-minute window per store ID and endpoint combination.
+- The Redis key expires after 30 minutes, resetting the limit.
+- Response headers include rate limit information for client awareness.
