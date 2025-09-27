@@ -8,6 +8,7 @@ A robust FastAPI application implementing rate limiting using Redis, containeriz
 - **Redis-based Rate Limiting**: Distributed rate limiting with Redis backend
 - **Docker Containerization**: Easy deployment with Docker and Docker Compose
 - **Middleware Implementation**: Custom rate limiting middleware for per-store, per-endpoint limits
+- **Agnostic Path Extraction**: Intelligently extracts feature/endpoint paths, ignoring service versions and prefixes
 - **Health Check Endpoint**: Built-in health monitoring
 - **Cleanup Endpoint**: Administrative endpoint for Redis data management
 
@@ -16,9 +17,9 @@ A robust FastAPI application implementing rate limiting using Redis, containeriz
 The application implements rate limiting based on:
 
 - **Store ID**: Identified via `store_id` query parameter
-- **Endpoint Path**: Rate limits are applied per endpoint
+- **Endpoint Path**: Rate limits are applied per feature/endpoint (ignoring service version, name, and access prefixes)
 - **Limit**: 4 requests per 30-minute window
-- **Redis Key Format**: `{store_id}_{path}`
+- **Redis Key Format**: `{store_id}_{feature/endpoint}`
 
 When rate limit is exceeded, returns HTTP 429 with appropriate headers:
 
@@ -77,11 +78,11 @@ Basic hello world endpoint.
 
 ### GET /health
 
-Health check endpoint requiring `store_id` parameter.
+Health check endpoint. Currently configured to bypass rate limiting.
 
 **Parameters:**
 
-- `store_id` (query): Store identifier for rate limiting
+- `store_id` (query): Store identifier (required for response, but not for rate limiting)
 
 **Response:**
 

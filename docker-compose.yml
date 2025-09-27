@@ -7,8 +7,8 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - RATE_LIMIT=${RATE_LIMIT:-1000}
-      - WINDOW=${WINDOW:-3600}
+      - RATE_LIMIT=${RATE_LIMIT:-5}
+      - WINDOW=${WINDOW:-1}
     depends_on:
       - redis
     restart: unless-stopped

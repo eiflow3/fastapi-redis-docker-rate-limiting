@@ -1,2 +1,5 @@
 __pycache__/
 docker_cheatsheet.md
+enhancement.md
+auth.md
+middleware_docs.md
