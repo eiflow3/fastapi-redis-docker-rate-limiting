@@ -1,4 +1,4 @@
-git branch -M main# FastAPI Redis Docker Rate Limiting
+# FastAPI Redis Docker Rate Limiting
 
 A robust FastAPI application implementing rate limiting using Redis, containerized with Docker for easy deployment and scalability.
 
